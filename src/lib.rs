@@ -53,11 +53,11 @@ impl<T> Receiver<T> {
         loop {
             match inner.queue.pop_front() {
                 Some(t) => {
-                    if !inner.queue.is_empty(){
+                    if !inner.queue.is_empty() {
                         std::mem::swap(&mut self.buffer, &mut inner.queue);
                     }
-                    return Some(t)
-                },
+                    return Some(t);
+                }
                 None if inner.senders == 0 => return None,
                 None => {
                     inner = self.shared.available.wait(inner).unwrap();
@@ -67,7 +67,7 @@ impl<T> Receiver<T> {
     }
 }
 
-impl <T> Iterator for Receiver<T> {
+impl<T> Iterator for Receiver<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -101,7 +101,7 @@ pub fn channel<T>() -> (Sender<T>, Receiver<T>) {
         },
         Receiver {
             shared: shared.clone(),
-            buffer: VecDeque::default()
+            buffer: VecDeque::default(),
         }
     )
 }
@@ -119,14 +119,14 @@ mod tests {
 
     #[test]
     fn closed_tx() {
-        let (mut tx, mut rx) = channel::<()>();
+        let (tx, mut rx) = channel::<()>();
         drop(tx);
         assert_eq!(rx.recv(), None)
     }
 
     #[test]
     fn closed_rx() {
-        let (mut tx, mut rx) = channel();
+        let (mut tx, rx) = channel();
         drop(rx);
         tx.send(42);
     }
